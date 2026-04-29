@@ -1,29 +1,75 @@
-import { useState, useEffect } from 'react'
-import axios from 'axios'
+import { Routes, Route, Navigate } from 'react-router-dom'
+import { GoogleOAuthProvider } from '@react-oauth/google'
+import { AuthProvider, useAuth } from './contexts/AuthContext'
+import { Toaster } from 'react-hot-toast'
+import MainLayout from './components/layout/MainLayout'
+import AdminLayout from './components/layout/AdminLayout'
+import HomePage from './pages/Home/HomePage'
+import LoginPage from './pages/Auth/LoginPage'
+import MarketPage from './pages/Market/MarketPage'
+import PostDetailPage from './pages/Market/PostDetailPage'
+import PostPage from './pages/Market/PostPage'
+import DocsPage from './pages/Docs/DocsPage'
+import UploadPage from './pages/Docs/UploadPage'
+import DocDetailPage from './pages/Docs/DocDetailPage'
+import MyReportsPage from './pages/Profile/MyReportsPage'
+import ProfilePage from './pages/Profile/ProfilePage'
+import UnitsPage from './pages/Admin/UnitsPage'
+import UsersPage from './pages/Admin/UsersPage'
+import ReportsPage from './pages/Admin/ReportsPage'
+import AdminDashboardPage from './pages/Admin/AdminDashboardPage'
+import AssistantDashboardPage from './pages/Assistant/AssistantDashboardPage'
+import SubjectsPage from './pages/Assistant/SubjectsPage'
+import AssistantDocsPage from './pages/Assistant/DocsPage'
+import AssistantPostsPage from './pages/Assistant/PostsPage'
+
+const RoleBasedRedirect = () => {
+  const { user, loading } = useAuth();
+  
+  if (loading) return null;
+
+  if (user?.role === 'ADMIN') return <Navigate to="/admin" replace />;
+  if (user?.role === 'ASSISTANT') return <Navigate to="/assistant" replace />;
+  return <Navigate to="/" replace />;
+};
 
 function App() {
-  const [status, setStatus] = useState('Checking backend connection...')
-
-  useEffect(() => {
-    axios.get('http://localhost:8080/api/health')
-      .then(res => setStatus(`Backend Status: ${res.data.status} at ${res.data.time}`))
-      .catch(err => {
-        const errorMsg = err.response?.data?.error || err.message;
-        setStatus(`Backend Lỗi: ${errorMsg}`);
-      })
-  }, [])
+  const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 p-4">
-      <div className="bg-white p-8 rounded-xl shadow-lg max-w-md w-full text-center">
-        <h1 className="text-3xl font-bold text-primary mb-4">HUSC CurEX</h1>
-        <p className="text-gray-600 mb-6">Hệ thống Trao đổi Giáo trình Đại học Khoa học, Đại học Huế</p>
-        
-        <div className={`p-3 rounded-lg text-sm font-medium ${status.includes('Connected') || status.includes('connected') ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
-          {status}
-        </div>
-      </div>
-    </div>
+    <GoogleOAuthProvider clientId={clientId}>
+      <AuthProvider>
+        <Toaster position="top-center" reverseOrder={false} />
+        <Routes>
+          <Route path="/login" element={<LoginPage />} />
+          <Route element={<MainLayout />}>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/market" element={<MarketPage />} />
+            <Route path="/market/:id" element={<PostDetailPage />} />
+            <Route path="/doc" element={<DocsPage />} />
+            <Route path="/doc/:id" element={<DocDetailPage />} />
+            <Route path="/report" element={<MyReportsPage />} />
+            <Route path="/profile" element={<ProfilePage />} />
+            <Route path="/post" element={<PostPage />} />
+            <Route path="/upload" element={<UploadPage />} />
+          </Route>
+
+          <Route element={<AdminLayout />}>
+            <Route path="/admin" element={<AdminDashboardPage />} />
+            <Route path="/users" element={<UsersPage />} />
+            <Route path="/reports" element={<ReportsPage />} />
+            <Route path="/assistant" element={<AssistantDashboardPage />} />
+            <Route path="/units" element={<UnitsPage />} />
+            <Route path="/subjects" element={<SubjectsPage />} />
+            <Route path="/docs" element={<AssistantDocsPage />} />
+            <Route path="/posts" element={<AssistantPostsPage />} />
+          </Route>
+
+          {/* Catch-all route for 404/Unauthorized access */}
+          <Route path="*" element={<RoleBasedRedirect />} />
+        </Routes>
+      </AuthProvider>
+    </GoogleOAuthProvider>
   )
 }
 

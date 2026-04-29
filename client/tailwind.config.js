@@ -7,10 +7,16 @@ export default {
   theme: {
     extend: {
       colors: {
-        primary: '#3b82f6', // Xanh lam chuẩn
-        secondary: '#10b981', // Xanh lá
-        dark: '#1e293b',
+        primary: {
+          DEFAULT: '#1261A6',
+          light: '#2A7BC6',
+          dark: '#0C4B82',
+        },
+        dark: '#111827',
         light: '#f8fafc',
+      },
+      fontFamily: {
+        sans: ['Montserrat', 'sans-serif'],
       }
     },
   },
