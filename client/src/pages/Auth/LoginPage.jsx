@@ -84,20 +84,25 @@ const LoginPage = () => {
       </div>
 
       {/* Cột phải: Form Đăng nhập */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 sm:p-12 relative">
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-12 relative">
         <div className="max-w-md w-full space-y-8">
           
           <div className="text-center">
-            <h2 className="text-3xl font-extrabold text-gray-900 tracking-tight">Tham gia</h2>
+            {/* Logo cho mobile (ẩn trên Desktop) */}
+            <div className="lg:hidden flex justify-center mb-6 select-none">
+              <img src="/logo.png" alt="HUSC CurEX" className="w-32 sm:w-40 h-auto" />
+            </div>
+            
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 tracking-tight">Chào mừng quay trở lại</h2>
             <p className="mt-2 text-sm text-gray-500 font-medium">
               Nền tảng học thuật HUSC CurEX
             </p>
           </div>
 
-          <div className="mt-10">
+          <div className="mt-8 sm:mt-10">
             {/* Khu vực Đăng nhập Google */}
             <div className="flex justify-center">
-              <div className="scale-110">
+              <div className="scale-100 sm:scale-110 w-full sm:w-auto flex justify-center">
                 <GoogleLogin
                   onSuccess={handleGoogleSuccess}
                   onError={() => setError('Kết nối với Google thất bại')}
@@ -105,23 +110,24 @@ const LoginPage = () => {
                   shape="pill"
                   theme="outline"
                   text="continue_with"
+                  width="100%"
                 />
               </div>
             </div>
 
-            <div className="mt-10 flex items-center justify-center">
+            <div className="mt-8 sm:mt-10 flex items-center justify-center">
               <div className="border-t border-gray-200 flex-grow"></div>
               <span className="mx-4 text-xs text-gray-400 font-bold tracking-wider">HOẶC</span>
               <div className="border-t border-gray-200 flex-grow"></div>
             </div>
 
             {/* Khu vực Đăng nhập Form Local */}
-            <form className="mt-8 space-y-6" onSubmit={handleLocalSubmit}>
+            <form className="mt-6 sm:mt-8 space-y-5 sm:space-y-6" onSubmit={handleLocalSubmit}>
               <div>
-                <label className="block text-sm font-bold text-gray-700 mb-1.5">Tài khoản</label>
+                <label className="block text-sm font-bold text-gray-700 mb-1.5 ml-1">Tài khoản</label>
                 <input 
                   type="text" 
-                  className="w-full px-4 py-3 bg-gray-50 rounded-xl border border-gray-200 focus:bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none text-gray-800"
+                  className="w-full px-4 py-3 sm:py-3.5 bg-gray-50 rounded-xl border border-gray-200 focus:bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none text-gray-800"
                   placeholder="Tên đăng nhập"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
@@ -130,11 +136,11 @@ const LoginPage = () => {
               </div>
               
               <div>
-                <label className="block text-sm font-bold text-gray-700 mb-1.5">Mật khẩu</label>
+                <label className="block text-sm font-bold text-gray-700 mb-1.5 ml-1">Mật khẩu</label>
                 <div className="relative">
                   <input 
                     type={showPassword ? "text" : "password"} 
-                    className="w-full px-4 py-3 bg-gray-50 rounded-xl border border-gray-200 focus:bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none text-gray-800 pr-12"
+                    className="w-full px-4 py-3 sm:py-3.5 bg-gray-50 rounded-xl border border-gray-200 focus:bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none text-gray-800 pr-12"
                     placeholder="••••••••"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
@@ -143,7 +149,7 @@ const LoginPage = () => {
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors p-1"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors p-2"
                   >
                     {showPassword ? (
                       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
@@ -162,14 +168,13 @@ const LoginPage = () => {
               <button 
                 type="submit" 
                 disabled={loading}
-                className="w-full bg-gray-900 text-white font-bold py-3.5 px-4 rounded-xl hover:bg-gray-800 transition-colors shadow-lg disabled:opacity-70 flex justify-center items-center mt-2"
+                className="w-full bg-gray-900 text-white font-bold py-3.5 sm:py-4 px-4 rounded-xl hover:bg-gray-800 transition-all shadow-lg active:scale-[0.98] disabled:opacity-70 flex justify-center items-center mt-2"
               >
                 {loading ? (
                   <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
                 ) : 'Đăng nhập'}
               </button>
             </form>
-
           </div>
         </div>
       </div>
