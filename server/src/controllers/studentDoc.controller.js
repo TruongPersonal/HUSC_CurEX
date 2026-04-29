@@ -1,4 +1,5 @@
 import { query } from '../database/db.js';
+import { uploadToSupabase } from '../utils/supabase.js';
 
 export const submitDocument = async (req, res) => {
   try {
@@ -15,7 +16,7 @@ export const submitDocument = async (req, res) => {
       return res.status(400).json({ message: 'Loại tài liệu không hợp lệ' });
     }
 
-    const file_url = `http://localhost:8080/uploads/${req.file.filename}`;
+    const file_url = await uploadToSupabase(req.file, 'documents');
 
     const result = await query(
       `INSERT INTO documents (title, file_url, type, status, user_id, subject_id)
@@ -220,7 +221,7 @@ export const updateDocument = async (req, res) => {
 
     let file_url = checkRes.rows[0].file_url;
     if (req.file) {
-      file_url = `http://localhost:8080/uploads/${req.file.filename}`;
+      file_url = await uploadToSupabase(req.file, 'documents');
     }
 
     const result = await query(

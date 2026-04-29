@@ -2,6 +2,7 @@ import { OAuth2Client } from 'google-auth-library';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import { query } from '../database/db.js';
+import { uploadToSupabase } from '../utils/supabase.js';
 
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
@@ -215,8 +216,8 @@ export const uploadAvatar = async (req, res) => {
     if (!req.file) {
       return res.status(400).json({ message: 'Vui lòng chọn ảnh đại diện.' });
     }
-
-    const avatar_url = `http://localhost:8080/uploads/${req.file.filename}`;
+    
+    const avatar_url = await uploadToSupabase(req.file, 'avatars');
     const userId = req.user.id;
 
     const result = await query(

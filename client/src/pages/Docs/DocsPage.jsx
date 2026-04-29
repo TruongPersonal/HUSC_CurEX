@@ -188,9 +188,7 @@ const DocsPage = () => {
             )}
 
             {loading ? (
-              <div className="flex justify-center py-20 text-gray-400 font-medium animate-pulse">
-                Đang tải tài liệu...
-              </div>
+              <div className="flex items-center justify-center mb-6 text-gray-400 font-medium animate-pulse">Đang tải...</div>
             ) : docs.length === 0 ? (
               <div className="bg-white rounded-3xl border border-gray-100 p-16 text-center shadow-sm">
                 <div className="text-5xl mb-4">🔍</div>

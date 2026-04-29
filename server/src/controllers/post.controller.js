@@ -1,4 +1,5 @@
 import { query } from '../database/db.js';
+import { uploadToSupabase } from '../utils/supabase.js';
 
 export const getFormData = async (req, res) => {
   try {
@@ -24,7 +25,7 @@ export const createPost = async (req, res) => {
       return res.status(400).json({ message: 'Vui lòng tải lên 1 hình ảnh' });
     }
     
-    const image_url = `http://localhost:8080/uploads/${req.file.filename}`;
+    const image_url = await uploadToSupabase(req.file, 'posts');
     
     if (!title || !price || !condition || !place || !subject_id) {
       return res.status(400).json({ message: 'Vui lòng điền đầy đủ các trường bắt buộc' });
