@@ -54,8 +54,7 @@ const MyReportsPage = () => {
         <div className="space-y-4">
           {loading ? (
             <div className="py-20 text-center">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-              <p className="text-gray-500 font-bold tracking-tight">Đang tải dữ liệu...</p>
+              <div className="text-gray-400 font-medium animate-pulse italic">Đang tải...</div>
             </div>
           ) : reports.length === 0 ? (
             <div className="bg-white rounded-3xl p-20 text-center border border-gray-100 shadow-sm">

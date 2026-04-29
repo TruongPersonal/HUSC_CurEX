@@ -113,7 +113,7 @@ const UsersPage = () => {
     setFormData({
       username: u.username,
       full_name: u.full_name,
-      unit_id: String(u.unit_id)
+      unit_id: u.unit_id ? String(u.unit_id) : ''
     });
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };

@@ -184,7 +184,7 @@ const Navbar = () => {
               </Link>
               {isAuthenticated && user?.role === 'STUDENT' && (
                 <Link to="/report" className={`px-4 py-3 rounded-xl font-bold flex items-center justify-between ${location.pathname === '/report' ? 'bg-primary/5 text-primary' : 'text-gray-600'}`}>
-                  Báo cáo vi phạm <span className="text-lg">🚩</span>
+                  Báo cáo <span className="text-lg">🚩</span>
                 </Link>
               )}
             </nav>

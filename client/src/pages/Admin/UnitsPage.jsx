@@ -80,9 +80,9 @@ const UnitsPage = () => {
       
       <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 mb-8">
         <h2 className="text-lg font-bold mb-4">{editId ? 'Sửa Đơn vị' : 'Thêm Đơn vị'}</h2>
-        <form onSubmit={handleSubmit} className="flex gap-4 items-end">
-          <div className="flex-1">
-            <label className="block text-sm font-medium text-gray-700 mb-1">Mã Đơn vị</label>
+        <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+          <div className="md:col-span-1">
+            <label className="block text-sm font-bold text-gray-700 mb-1">Mã Đơn vị</label>
             <input 
               type="text" required
               placeholder='VD: TIN'
@@ -90,8 +90,8 @@ const UnitsPage = () => {
               value={formData.code} onChange={e => setFormData({...formData, code: e.target.value})}
             />
           </div>
-          <div className="flex-[2]">
-            <label className="block text-sm font-medium text-gray-700 mb-1">Tên Đơn vị</label>
+          <div className="md:col-span-2">
+            <label className="block text-sm font-bold text-gray-700 mb-1">Tên Đơn vị</label>
             <input 
               type="text" required
               placeholder='VD: Khoa Công nghệ thông tin'
@@ -99,14 +99,16 @@ const UnitsPage = () => {
               value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})}
             />
           </div>
-          <button type="submit" className="px-6 py-2 bg-primary text-white font-bold rounded-lg hover:bg-primary-dark transition-all">
-            {editId ? 'Cập nhật' : 'Thêm mới'}
-          </button>
-          {editId && (
-            <button type="button" onClick={() => {setEditId(null); setFormData({code:'', name:''})}} className="px-4 py-2 bg-gray-100 text-gray-600 font-bold rounded-lg hover:bg-gray-200 transition-all">
-              Hủy
+          <div className="md:col-span-1 flex gap-2">
+            <button type="submit" className="flex-1 px-6 py-2 bg-primary text-white font-bold rounded-lg hover:bg-primary-dark transition-all">
+              {editId ? 'Lưu' : 'Thêm'}
             </button>
-          )}
+            {editId && (
+              <button type="button" onClick={() => {setEditId(null); setFormData({code:'', name:''})}} className="px-4 py-2 bg-gray-100 text-gray-600 font-bold rounded-lg hover:bg-gray-200 transition-all">
+                Hủy
+              </button>
+            )}
+          </div>
         </form>
       </div>
 
