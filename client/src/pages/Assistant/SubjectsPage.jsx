@@ -152,21 +152,19 @@ const SubjectsPage = () => {
               <tr className="bg-gray-50 border-b border-gray-200">
                 <th className="px-6 py-3 text-sm font-bold text-gray-700 whitespace-nowrap">Mã Học phần</th>
                 <th className="px-6 py-3 text-sm font-bold text-gray-700 whitespace-nowrap">Tên Học phần</th>
-                <th className="px-6 py-3 text-sm font-bold text-gray-700 whitespace-nowrap">Khoa/Đơn vị</th>
                 <th className="px-6 py-3 text-sm font-bold text-gray-700 whitespace-nowrap text-right">Thao tác</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
               {loading ? (
-                <tr><td colSpan="4" className="px-6 py-4 text-center whitespace-nowrap">Đang tải...</td></tr>
+                <tr><td colSpan="3" className="px-6 py-4 text-center whitespace-nowrap">Đang tải...</td></tr>
               ) : subjects.length === 0 ? (
-                <tr><td colSpan="4" className="px-6 py-4 text-center text-gray-500 whitespace-nowrap">Chưa có học phần nào.</td></tr>
+                <tr><td colSpan="3" className="px-6 py-4 text-center text-gray-500 whitespace-nowrap">Chưa có học phần nào.</td></tr>
               ) : (
                 subjects.map(subject => (
                   <tr key={subject.id} className="hover:bg-gray-50">
                     <td className="px-6 py-4 font-mono text-sm text-primary whitespace-nowrap">{subject.code}</td>
                     <td className="px-6 py-4 font-medium text-gray-800 whitespace-nowrap">{subject.name}</td>
-                    <td className="px-6 py-4 text-sm text-gray-600 whitespace-nowrap">{subject.unit_name}</td>
                     <td className="px-6 py-4 text-right whitespace-nowrap">
                       <div className="flex justify-end gap-2">
                         <button 
