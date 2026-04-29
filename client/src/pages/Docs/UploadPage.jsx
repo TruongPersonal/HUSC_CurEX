@@ -148,8 +148,7 @@ const UploadPage = () => {
                 type="submit" disabled={loading}
                 className="px-8 py-2.5 rounded-xl font-bold text-white bg-primary hover:bg-primary-dark transition-colors shadow-sm disabled:opacity-70 disabled:cursor-not-allowed flex items-center gap-2"
               >
-                {loading && <span className="text-sm">Đang tải...</span>}
-                Đóng góp
+                {loading ? 'Đang tải...' : 'Đóng góp'}
               </button>
             </div>
           </form>

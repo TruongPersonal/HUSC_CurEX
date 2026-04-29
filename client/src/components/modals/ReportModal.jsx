@@ -112,7 +112,7 @@ const ReportModal = ({ isOpen, onClose, targetId, targetType, targetTitle }) => 
                 disabled={isSubmitting || !reason}
                 className="flex-[2] py-4 bg-red-600 text-white font-black rounded-2xl hover:bg-red-700 transition-all shadow-lg shadow-red-100 disabled:opacity-50 disabled:shadow-none flex items-center justify-center gap-2"
               >
-                {isSubmitting ? 'ĐANG GỬI...' : (
+                {isSubmitting ? 'Đang tải...' : (
                   <>
                     XÁC NHẬN
                   </>
