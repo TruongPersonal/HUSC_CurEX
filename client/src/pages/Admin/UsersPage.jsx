@@ -113,8 +113,9 @@ const UsersPage = () => {
     setFormData({
       username: u.username,
       full_name: u.full_name,
-      unit_id: u.unit_id ? String(u.unit_id) : ''
+      unit_id: u.unit_id ? String(u.unit_id) : (units.length > 0 ? String(units[0].id) : '')
     });
+    // Cuộn lên đầu trang để thấy form sửa
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 

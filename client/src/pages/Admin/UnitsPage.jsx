@@ -51,6 +51,8 @@ const UnitsPage = () => {
   const handleEdit = (unit) => {
     setFormData({ code: unit.code, name: unit.name });
     setEditId(unit.id);
+    // Cuộn lên đầu trang để thấy form sửa
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleDelete = async () => {

@@ -70,6 +70,8 @@ const SubjectsPage = () => {
   const handleEdit = (sub) => {
     setFormData({ code: sub.code, name: sub.name, unit_id: sub.unit_id });
     setEditId(sub.id);
+    // Cuộn lên đầu trang để thấy form sửa
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleDelete = async () => {
