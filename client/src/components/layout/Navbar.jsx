@@ -58,8 +58,8 @@ const Navbar = () => {
           </span>
         </Link>
         
-        {/* Desktop Search */}
-        <div className="hidden lg:flex flex-1 max-w-lg mx-8">
+        {/* Desktop & Tablet Search */}
+        <div className="hidden md:flex flex-1 max-w-lg mx-8">
           <form onSubmit={handleSearch} className="flex w-full relative group shadow-sm hover:shadow-md transition-shadow rounded-full">
             <div className="relative">
               <select 
@@ -163,7 +163,7 @@ const Navbar = () => {
               </div>
               <input 
                 type="text" 
-                placeholder="Tìm kiếm nội dung..."
+                placeholder={searchType === 'doc' ? "Tìm học phần, người đăng..." : "Tìm giáo trình, người bán..."}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="flex-1 h-full pl-3 pr-10 py-3 bg-white focus:outline-none text-sm"

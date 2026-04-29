@@ -115,7 +115,7 @@ const DocDetailPage = () => {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="flex flex-col items-center gap-4">
-          <p className="text-gray-500 font-medium">Đang chuẩn bị tài liệu...</p>
+          <p className="text-gray-500 font-medium">Đang tải...</p>
         </div>
       </div>
     );
@@ -287,7 +287,7 @@ const DocDetailPage = () => {
                     download 
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-full py-3 md:py-4 bg-primary text-white font-black rounded-xl md:rounded-2xl hover:bg-primary-dark transition-all transform active:scale-95 shadow-lg shadow-primary/20 flex items-center justify-center gap-2 text-sm md:text-base"
+                    className="w-full py-2.5 md:py-3 bg-primary text-white font-black rounded-xl md:rounded-2xl hover:bg-primary-dark transition-all transform active:scale-95 shadow-lg shadow-primary/20 flex items-center justify-center gap-2 text-sm md:text-base"
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
                     TẢI VỀ
@@ -338,7 +338,7 @@ const DocDetailPage = () => {
                   <button 
                     onClick={() => setShowReportModal(true)}
                     disabled={doc.has_reported}
-                    className={`w-full py-3 md:py-4 font-black rounded-xl md:rounded-2xl shadow-lg transition-all flex items-center justify-center gap-2 uppercase text-sm md:text-base ${doc.has_reported ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-red-500 text-white shadow-red-100 hover:bg-red-600'}`}
+                    className={`w-full py-2.5 md:py-3 font-black rounded-xl md:rounded-2xl shadow-lg transition-all flex items-center justify-center gap-2 uppercase text-xs md:text-sm ${doc.has_reported ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-red-500 text-white shadow-red-100 hover:bg-red-600'}`}
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
                     {doc.has_reported ? 'ĐÃ BÁO CÁO' : 'BÁO CÁO'}
