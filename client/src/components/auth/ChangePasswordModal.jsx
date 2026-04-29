@@ -33,6 +33,8 @@ const ChangePasswordModal = ({ isOpen, onClose }) => {
         { oldPassword, newPassword }
       );
       setSuccess(res.data.message);
+      // Cập nhật trạng thái user để hiện ô mật khẩu hiện tại cho lần sau
+      setUser({ ...user, has_password: true });
       setOldPassword('');
       setNewPassword('');
       setConfirmPassword('');

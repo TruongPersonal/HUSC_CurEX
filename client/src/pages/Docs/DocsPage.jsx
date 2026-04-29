@@ -203,12 +203,12 @@ const DocsPage = () => {
                 </div>
 
                 {hasMore && (
-                  <div className="mt-12 text-center">
+                  <div className="mt-10 text-center">
                     <button 
                       onClick={handleLoadMore}
                       className="w-full sm:w-auto px-8 py-3 bg-white border-2 border-gray-200 text-gray-700 font-bold rounded-2xl hover:border-primary hover:text-primary transition-all shadow-sm active:scale-95"
                     >
-                      Tải thêm kết quả
+                      Tải thêm
                     </button>
                   </div>
                 )}
