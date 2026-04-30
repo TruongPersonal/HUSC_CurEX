@@ -194,22 +194,6 @@ const PostDetailPage = () => {
                 alt={post.title}
                 className="w-full aspect-square sm:aspect-[4/3] object-cover"
               />
-              {isEditing && (
-                <div className="absolute inset-0 bg-black/40 flex items-center justify-center p-4">
-                  <div className="bg-white p-4 rounded-xl shadow-xl w-full max-w-xs text-center">
-                    <p className="text-xs font-bold text-gray-500 mb-3 uppercase tracking-wider">Đổi ảnh mới</p>
-                    <input 
-                      type="file" 
-                      accept="image/*"
-                      onChange={(e) => setEditForm({...editForm, image: e.target.files[0]})}
-                      className="text-xs w-full mb-2 file:mr-2 file:py-1 file:px-2 file:rounded-full file:border-0 file:text-[10px] file:font-black file:bg-primary/10 file:text-primary hover:file:bg-primary/20 cursor-pointer"
-                    />
-                    {editForm.image && (
-                      <p className="text-[10px] text-green-600 font-bold truncate">✓ {editForm.image.name}</p>
-                    )}
-                  </div>
-                </div>
-              )}
               <div className="absolute top-4 right-4 md:top-6 md:right-6 z-10 flex flex-col gap-2 items-end">
                 <Badge status={post.condition === 'GOOD' ? 'success' : 'warning'} className="shadow-lg backdrop-blur-md text-[10px] md:text-xs">
                   {post.condition === 'GOOD' ? 'Mới' : 'Cũ'}
@@ -300,14 +284,15 @@ const PostDetailPage = () => {
                           "{req.buyer_message}"
                         </div>
                         
-                        {req.status === 'PENDING' && !activeRequest && (
+                        {req.status === 'PENDING' && (
                           <div className="flex gap-2">
                             <button 
+                              disabled={activeRequest}
                               onClick={() => {
                                 setSelectedRequestId(req.id);
                                 setShowAcceptModal(true);
                               }}
-                              className="px-3 md:px-4 py-1.5 md:py-2 bg-primary text-white text-[10px] md:text-xs font-black rounded-lg hover:bg-primary-dark transition-all"
+                              className={`px-3 md:px-4 py-1.5 md:py-2 text-white text-[10px] md:text-xs font-black rounded-lg transition-all ${activeRequest ? 'bg-gray-300 cursor-not-allowed' : 'bg-primary hover:bg-primary-dark'}`}
                             >
                               CHẤP NHẬN
                             </button>
@@ -392,35 +377,49 @@ const PostDetailPage = () => {
               </div>
 
               {isEditing ? (
-                <div className="space-y-4 mb-6">
-                  <input 
-                    type="text" 
-                    className="w-full p-3 border-2 border-primary/20 rounded-xl font-black text-lg md:text-xl outline-none focus:border-primary"
-                    value={editForm.title}
-                    onChange={(e) => setEditForm({...editForm, title: e.target.value})}
-                  />
-                  <div className="flex items-center gap-2 p-3 bg-gray-50 rounded-xl border border-gray-100">
-                    <span className="font-bold text-sm text-gray-500">Giá:</span>
+                  <div className="space-y-4 mb-6">
                     <input 
-                      type="number" 
-                      className="flex-1 bg-transparent font-black text-primary outline-none text-sm md:text-base"
-                      value={editForm.price}
-                      onChange={(e) => setEditForm({...editForm, price: parseInt(e.target.value) || 0})}
+                      type="text" 
+                      className="w-full p-3 border-2 border-primary/20 rounded-xl font-black text-lg md:text-xl outline-none focus:border-primary"
+                      value={editForm.title}
+                      onChange={(e) => setEditForm({...editForm, title: e.target.value})}
                     />
-                    <span className="text-[10px] md:text-xs font-bold text-gray-400">VNĐ</span>
+                    
+                    <div className="p-4 bg-blue-50/50 rounded-2xl border border-blue-100">
+                      <p className="text-[10px] font-black text-blue-400 uppercase tracking-widest mb-2">Đổi ảnh bài đăng</p>
+                      <input 
+                        type="file" 
+                        accept="image/*"
+                        onChange={(e) => setEditForm({...editForm, image: e.target.files[0]})}
+                        className="text-xs w-full file:mr-3 file:py-1.5 file:px-3 file:rounded-full file:border-0 file:text-[10px] file:font-black file:bg-primary file:text-white hover:file:bg-primary-dark cursor-pointer"
+                      />
+                      {editForm.image && (
+                        <p className="text-[10px] text-green-600 font-bold mt-2">✓ Đã chọn: {editForm.image.name}</p>
+                      )}
+                    </div>
+
+                    <div className="flex items-center gap-2 p-3 bg-gray-50 rounded-xl border border-gray-100">
+                      <span className="font-bold text-sm text-gray-500">Giá:</span>
+                      <input 
+                        type="number" 
+                        className="flex-1 bg-transparent font-black text-primary outline-none text-sm md:text-base"
+                        value={editForm.price}
+                        onChange={(e) => setEditForm({...editForm, price: parseInt(e.target.value) || 0})}
+                      />
+                      <span className="text-[10px] md:text-xs font-bold text-gray-400">VNĐ</span>
+                    </div>
+                    <div className="flex items-center gap-2 p-3 bg-gray-50 rounded-xl border border-gray-100">
+                      <span className="font-bold text-sm text-gray-500">Tình trạng:</span>
+                      <select 
+                        className="flex-1 bg-transparent font-bold text-gray-700 outline-none cursor-pointer text-sm md:text-base"
+                        value={editForm.condition}
+                        onChange={(e) => setEditForm({...editForm, condition: e.target.value})}
+                      >
+                        <option value="GOOD">Mới</option>
+                        <option value="POOR">Cũ</option>
+                      </select>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-2 p-3 bg-gray-50 rounded-xl border border-gray-100">
-                    <span className="font-bold text-sm text-gray-500">Tình trạng:</span>
-                    <select 
-                      className="flex-1 bg-transparent font-bold text-gray-700 outline-none cursor-pointer text-sm md:text-base"
-                      value={editForm.condition}
-                      onChange={(e) => setEditForm({...editForm, condition: e.target.value})}
-                    >
-                      <option value="GOOD">Mới</option>
-                      <option value="POOR">Cũ</option>
-                    </select>
-                  </div>
-                </div>
               ) : (
                 <>
                   <h1 className="text-xl md:text-3xl font-black text-gray-900 mb-3 md:mb-4 leading-tight">
