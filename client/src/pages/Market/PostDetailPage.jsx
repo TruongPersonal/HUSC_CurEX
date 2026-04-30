@@ -387,6 +387,7 @@ const PostDetailPage = () => {
                     
                     <div className="flex items-center gap-2 p-3 bg-gray-50 rounded-xl border border-gray-100">
                       <span className="font-bold text-sm text-gray-500 whitespace-nowrap">Ảnh mới:</span>
+                      <br/>
                       <input 
                         type="file" 
                         accept="image/*"
