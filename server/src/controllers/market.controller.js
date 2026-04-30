@@ -376,7 +376,7 @@ export const updateMarketPost = async (req, res) => {
 
     let imageUrl = postCheck.rows[0].image_url;
     if (req.file) {
-      imageUrl = await uploadToSupabase(req.file, 'market');
+      imageUrl = await uploadToSupabase(req.file, 'posts');
     }
 
     await query(`
