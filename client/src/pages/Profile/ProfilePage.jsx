@@ -26,6 +26,11 @@ const ProfilePage = () => {
 
   const handleSubmit = async (e) => {
     if (e) e.preventDefault();
+    
+    if (formData.phone && !/^0[0-9]{9}$/.test(formData.phone)) {
+      return toast.error('Số điện thoại phải có 10 chữ số và bắt đầu bằng số 0');
+    }
+
     setLoading(true);
     try {
       const res = await api.put('/api/auth/update-profile', formData);

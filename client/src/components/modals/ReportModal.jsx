@@ -18,7 +18,7 @@ const REASONS = {
   ]
 };
 
-const ReportModal = ({ isOpen, onClose, targetId, targetType, targetTitle }) => {
+const ReportModal = ({ isOpen, onClose, targetId, targetType, targetTitle, onSuccess }) => {
   const { token } = useAuth();
   const [reason, setReason] = useState('');
   const [description, setDescription] = useState('');
@@ -44,6 +44,7 @@ const ReportModal = ({ isOpen, onClose, targetId, targetType, targetTitle }) => 
       await api.post('/api/reports', data);
 
       toast.success('Báo cáo đã được gửi. Cảm ơn đóng góp của bạn!');
+      if (onSuccess) onSuccess();
       onClose();
     } catch (err) {
       toast.error(err.response?.data?.message || 'Lỗi khi gửi báo cáo.');

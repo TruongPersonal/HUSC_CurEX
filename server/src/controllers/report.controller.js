@@ -47,12 +47,14 @@ export const updateReportStatus = async (req, res) => {
 
     const report = result.rows[0];
 
-    // If report is resolved, hide the content
+    // If report is resolved, hide the content and resolve ALL OTHER reports for the same content
     if (status === 'RESOLVED') {
       if (report.post_id) {
         await query('UPDATE posts SET is_hidden = TRUE WHERE id = $1', [report.post_id]);
+        await query('UPDATE reports SET status = $1, updated_at = CURRENT_TIMESTAMP WHERE post_id = $2 AND status = $3', ['RESOLVED', report.post_id, 'PENDING']);
       } else if (report.document_id) {
         await query('UPDATE documents SET is_hidden = TRUE WHERE id = $1', [report.document_id]);
+        await query('UPDATE reports SET status = $1, updated_at = CURRENT_TIMESTAMP WHERE document_id = $2 AND status = $3', ['RESOLVED', report.document_id, 'PENDING']);
       }
     }
 

@@ -4,7 +4,7 @@ import api from '../../utils/api';
 import { useAuth } from '../../contexts/AuthContext';
 
 const ChangePasswordModal = ({ isOpen, onClose }) => {
-  const { token, user } = useAuth();
+  const { token, user, setUser } = useAuth();
   const [oldPassword, setOldPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -32,9 +32,14 @@ const ChangePasswordModal = ({ isOpen, onClose }) => {
         '/api/auth/change-password',
         { oldPassword, newPassword }
       );
+      
+      // Thành công thì xóa sạch lỗi và gán success
+      setError('');
       setSuccess(res.data.message);
+      
       // Cập nhật trạng thái user để hiện ô mật khẩu hiện tại cho lần sau
       setUser({ ...user, has_password: true });
+      
       setOldPassword('');
       setNewPassword('');
       setConfirmPassword('');
@@ -43,6 +48,7 @@ const ChangePasswordModal = ({ isOpen, onClose }) => {
         setSuccess('');
       }, 2000);
     } catch (err) {
+      setSuccess('');
       setError(err.response?.data?.message || 'Có lỗi xảy ra, vui lòng thử lại sau.');
     } finally {
       setLoading(false);

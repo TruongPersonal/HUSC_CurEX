@@ -375,6 +375,7 @@ const DocDetailPage = () => {
       <ReportModal 
         isOpen={showReportModal}
         onClose={() => setShowReportModal(false)}
+        onSuccess={() => setDoc({ ...doc, has_reported: true })}
         targetId={id}
         targetType="DOCUMENT"
         targetTitle={doc.title}

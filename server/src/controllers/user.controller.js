@@ -13,9 +13,9 @@ export const getUsers = async (req, res) => {
       LEFT JOIN (
         SELECT owner_id, COUNT(*) as total
         FROM (
-          SELECT p.user_id as owner_id FROM reports r JOIN posts p ON r.post_id = p.id WHERE r.status = 'RESOLVED'
+          SELECT DISTINCT p.user_id as owner_id, p.id FROM reports r JOIN posts p ON r.post_id = p.id WHERE r.status = 'RESOLVED'
           UNION ALL
-          SELECT d.user_id as owner_id FROM reports r JOIN documents d ON r.document_id = d.id WHERE r.status = 'RESOLVED'
+          SELECT DISTINCT d.user_id as owner_id, d.id FROM reports r JOIN documents d ON r.document_id = d.id WHERE r.status = 'RESOLVED'
         ) combined
         GROUP BY owner_id
       ) v ON u.id = v.owner_id

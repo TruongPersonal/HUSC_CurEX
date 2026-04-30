@@ -140,9 +140,12 @@ const PostDetailPage = () => {
 
   const handleUpdateRequestStatus = async (requestId, status, meeting_at = null, poster_message = null) => {
     try {
+      // Đảm bảo gửi giờ đi dưới dạng ISO để tránh lệch múi giờ
+      const formattedMeetingAt = meeting_at ? new Date(meeting_at).toISOString() : null;
+      
       await api.patch(`/api/market/requests/${requestId}`, { 
         status, 
-        meeting_at,
+        meeting_at: formattedMeetingAt,
         poster_message
       });
       fetchPostDetail();
@@ -198,9 +201,6 @@ const PostDetailPage = () => {
                 <Badge status={post.condition === 'GOOD' ? 'success' : 'warning'} className="shadow-lg backdrop-blur-md text-[10px] md:text-xs">
                   {post.condition === 'GOOD' ? 'Mới' : 'Cũ'}
                 </Badge>
-                {post.is_owner && post.is_hidden && (
-                  <Badge status="error" className="shadow-lg backdrop-blur-md text-[10px] md:text-xs">Đang bị ẩn</Badge>
-                )}
               </div>
 
               {post.status === 'SOLD' && (
@@ -506,11 +506,16 @@ const PostDetailPage = () => {
                             hour: '2-digit', minute: '2-digit'
                           })}
                         </div>
-                        {post.is_owner && activeRequest?.status === 'ACCEPTED' && (
+                        {(post.is_owner || post.my_request?.status === 'ACCEPTED') && activeRequest?.status === 'ACCEPTED' && (
                           <button 
                             onClick={() => {
-                              setSelectedRequestId(activeRequest.id);
-                              setMeetingAt(activeRequest.meeting_at || '');
+                              setSelectedRequestId(activeRequest?.id || post.my_request?.id);
+                              
+                              // Convert UTC to local format YYYY-MM-DDTHH:mm for input
+                              const date = new Date(activeRequest?.meeting_at || post.my_request?.meeting_at);
+                              const localDateTime = new Date(date.getTime() - (date.getTimezoneOffset() * 60000)).toISOString().slice(0, 16);
+                              
+                              setMeetingAt(localDateTime);
                               setShowAcceptModal(true);
                             }}
                             className="p-1 hover:bg-blue-100 rounded text-blue-400 transition-colors"
@@ -760,6 +765,7 @@ const PostDetailPage = () => {
       <ReportModal 
         isOpen={showReportModal}
         onClose={() => setShowReportModal(false)}
+        onSuccess={() => setPost({ ...post, has_reported: true })}
         targetId={id}
         targetType="POST"
         targetTitle={post.title}
