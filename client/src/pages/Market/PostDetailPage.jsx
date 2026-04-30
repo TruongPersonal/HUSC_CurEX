@@ -476,7 +476,7 @@ const PostDetailPage = () => {
                   </div>
                 </div>
 
-                {((post.status === 'SOLD' && post.buyer) || activeRequest) && post.is_owner && (
+                {((post.status === 'SOLD' && post.buyer) || (activeRequest && post.is_owner)) && (
                   <div className="flex items-center gap-3 text-gray-600">
                     <div className={`w-8 h-8 md:w-10 md:h-10 rounded-lg md:rounded-xl flex items-center justify-center text-sm md:text-base ${post.status === 'SOLD' ? 'bg-gray-50 text-gray-500' : 'bg-blue-50 text-blue-500'}`}>🤝</div>
                     <div className="min-w-0 flex-1">
