@@ -147,7 +147,7 @@ const PostDetailPage = () => {
 
       await api.patch(`/api/market/requests/${requestId}`, { 
         status, 
-        meeting_at, // Gửi trực tiếp chuỗi từ input (local time)
+        meeting_at: meeting_at ? new Date(meeting_at).toISOString() : null, // Gửi giờ UTC chuẩn
         poster_message
       });
       fetchPostDetail();
@@ -183,17 +183,25 @@ const PostDetailPage = () => {
     </div>
   );
 
-  const parseLocalDate = (dateStr) => {
+  const parseStandardDate = (dateStr) => {
     if (!dateStr) return null;
-    // Ép trình duyệt hiểu đây là giờ Local bằng cách xóa 'Z' và chuẩn hóa 'T'
-    return new Date(dateStr.replace(' ', 'T').replace('Z', ''));
+    // Nếu server trả về thiếu 'Z', ta chủ động thêm vào để trình duyệt hiểu là UTC
+    const utcStr = (dateStr.includes('Z') || dateStr.includes('+')) ? dateStr : dateStr.replace(' ', 'T') + 'Z';
+    return new Date(utcStr);
   };
 
-  const activeRequest = exchangeRequests.find(r => r.status === 'ACCEPTED' || r.status === 'COMPLETED');
-  const isAcceptedBuyer = post.my_request && ['ACCEPTED', 'COMPLETED', 'CANCELLED'].includes(post.my_request.status);
+  // Tìm yêu cầu đang được chấp nhận (dành cho người bán)
+  const acceptedRequestForSeller = exchangeRequests.find(r => r.status === 'ACCEPTED' || r.status === 'COMPLETED');
+  
+  // Yêu cầu đang hoạt động (có thể là của người bán xem danh sách, hoặc người mua xem của chính mình)
+  const activeRequest = post?.is_owner ? acceptedRequestForSeller : (
+    (post?.my_request?.status === 'ACCEPTED' || post?.my_request?.status === 'COMPLETED') ? post.my_request : null
+  );
+
+  const isAcceptedBuyer = post?.my_request && ['ACCEPTED', 'COMPLETED', 'CANCELLED'].includes(post.my_request.status);
   
   const meetingTime = post.my_request?.meeting_at || activeRequest?.meeting_at;
-  const meetingDateObj = parseLocalDate(meetingTime);
+  const meetingDateObj = parseStandardDate(meetingTime);
   const meetingPassed = meetingDateObj && meetingDateObj <= new Date();
   
   const canReport = isAcceptedBuyer && meetingPassed;
@@ -325,17 +333,17 @@ const PostDetailPage = () => {
                             <div className="flex gap-2">
                               <button 
                                 onClick={() => handleUpdateRequestStatus(req.id, 'COMPLETED')}
-                                disabled={new Date() < parseLocalDate(req.meeting_at)}
-                                className={`px-3 md:px-4 py-1.5 md:py-2 text-white text-[10px] md:text-xs font-black rounded-lg transition-all ${new Date() < parseLocalDate(req.meeting_at) ? 'bg-gray-300 cursor-not-allowed' : 'bg-green-600 hover:bg-green-700'}`}
-                                title={new Date() < parseLocalDate(req.meeting_at) ? "Chỉ có thể xác nhận sau giờ hẹn" : ""}
+                                disabled={new Date() < parseStandardDate(req.meeting_at)}
+                                className={`px-3 md:px-4 py-1.5 md:py-2 text-white text-[10px] md:text-xs font-black rounded-lg transition-all ${new Date() < parseStandardDate(req.meeting_at) ? 'bg-gray-300 cursor-not-allowed' : 'bg-green-600 hover:bg-green-700'}`}
+                                title={new Date() < parseStandardDate(req.meeting_at) ? "Chỉ có thể xác nhận sau giờ hẹn" : ""}
                               >
                                 THÀNH CÔNG
                               </button>
                               <button 
                                 onClick={() => handleUpdateRequestStatus(req.id, 'CANCELLED')}
-                                disabled={new Date() < parseLocalDate(req.meeting_at)}
-                                className={`px-3 md:px-4 py-1.5 md:py-2 text-[10px] md:text-xs font-bold rounded-lg transition-all ${new Date() < parseLocalDate(req.meeting_at) ? 'bg-gray-100 text-gray-300 cursor-not-allowed' : 'bg-red-50 text-red-600 hover:bg-red-100'}`}
-                                title={new Date() < parseLocalDate(req.meeting_at) ? "Chỉ có thể xác nhận sau giờ hẹn" : ""}
+                                disabled={new Date() < parseStandardDate(req.meeting_at)}
+                                className={`px-3 md:px-4 py-1.5 md:py-2 text-[10px] md:text-xs font-bold rounded-lg transition-all ${new Date() < parseStandardDate(req.meeting_at) ? 'bg-gray-100 text-gray-300 cursor-not-allowed' : 'bg-red-50 text-red-600 hover:bg-red-100'}`}
+                                title={new Date() < parseStandardDate(req.meeting_at) ? "Chỉ có thể xác nhận sau giờ hẹn" : ""}
                               >
                                 THẤT BẠI
                               </button>
@@ -515,7 +523,7 @@ const PostDetailPage = () => {
                               : (activeRequest?.meeting_at || post.my_request?.meeting_at);
                             if (!dateStr) return '—';
                             
-                            const dateObj = parseLocalDate(dateStr);
+                            const dateObj = parseStandardDate(dateStr);
                             return dateObj.toLocaleString('vi-VN', {
                               day: '2-digit', month: '2-digit', year: 'numeric',
                               hour: '2-digit', minute: '2-digit'
@@ -525,9 +533,9 @@ const PostDetailPage = () => {
                         {(post.is_owner || post.my_request?.status === 'ACCEPTED') && activeRequest?.status === 'ACCEPTED' && (
                           <button 
                             onClick={() => {
-                              setSelectedRequestId(activeRequest?.id || post.my_request?.id);
+                              setSelectedRequestId(activeRequest?.id);
                               
-                              const date = parseLocalDate(activeRequest?.meeting_at || post.my_request?.meeting_at);
+                              const date = parseStandardDate(activeRequest?.meeting_at || post.my_request?.meeting_at);
                               const localDateTime = new Date(date.getTime() - (date.getTimezoneOffset() * 60000)).toISOString().slice(0, 16);
                               
                               setMeetingAt(localDateTime);
