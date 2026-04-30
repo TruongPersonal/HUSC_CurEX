@@ -244,7 +244,7 @@ const PostDetailPage = () => {
               </div>
             )}
 
-            {post.is_owner && post.status !== 'SOLD' && (
+            {post.is_owner && (
               <div className="bg-white rounded-2xl md:rounded-3xl p-5 md:p-8 shadow-sm border border-gray-100">
                 <div className="flex justify-between items-center mb-4 md:mb-6">
                   <h2 className="text-lg md:text-xl font-black text-gray-900 flex items-center gap-2">
@@ -624,7 +624,7 @@ const PostDetailPage = () => {
                     </div>
                   ) : (
                     <>
-                      {post.status !== 'SOLD' && !post.is_hidden_by_admin && (
+                      {post.status === 'AVAILABLE' && !activeRequest && !post.is_hidden_by_admin && (
                         <button 
                           onClick={() => setIsEditing(true)}
                           className="w-full py-3 bg-gray-900 text-white font-black rounded-xl md:rounded-2xl hover:bg-black transition-all flex items-center justify-center gap-2 text-sm"
