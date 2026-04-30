@@ -100,14 +100,14 @@ const PostsPage = () => {
               ) : (
                 posts.map(post => (
                   <tr key={post.id} className="hover:bg-gray-50 align-middle">
-                    <td className="px-6 py-4">
+                    <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center gap-3">
                         <div className="w-12 h-12 rounded-lg overflow-hidden border border-gray-100 flex-shrink-0">
                           <img src={post.image_url} alt="" className="w-full h-full object-cover" />
                         </div>
-                        <div className="min-w-[200px] max-w-[400px]">
-                          <div className="font-bold text-gray-800 break-words mb-1">{post.title}</div>
-                          <div className="flex items-center gap-x-3 gap-y-1 flex-wrap">
+                        <div className="max-w-[300px] md:max-w-[400px]">
+                          <div className="font-bold text-gray-800 truncate mb-1" title={post.title}>{post.title}</div>
+                          <div className="flex items-center gap-x-3 gap-y-1 whitespace-nowrap">
                             {/* Giá */}
                             <span className="text-sm font-extrabold text-primary">
                               {post.price === 0 ? 'Miễn phí' : post.price.toLocaleString('vi-VN') + 'đ'}
