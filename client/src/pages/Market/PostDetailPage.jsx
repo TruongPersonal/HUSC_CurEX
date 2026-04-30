@@ -140,12 +140,14 @@ const PostDetailPage = () => {
 
   const handleUpdateRequestStatus = async (requestId, status, meeting_at = null, poster_message = null) => {
     try {
-      // Đảm bảo gửi giờ đi dưới dạng ISO để tránh lệch múi giờ
-      const formattedMeetingAt = meeting_at ? new Date(meeting_at).toISOString() : null;
-      
+      // Kiểm tra thời gian phải >= hiện tại
+      if (meeting_at && new Date(meeting_at) < new Date()) {
+        return toast.error('Thời gian hẹn gặp không được ở quá khứ!');
+      }
+
       await api.patch(`/api/market/requests/${requestId}`, { 
         status, 
-        meeting_at: formattedMeetingAt,
+        meeting_at, // Gửi trực tiếp chuỗi từ input (local time)
         poster_message
       });
       fetchPostDetail();
@@ -497,14 +499,19 @@ const PostDetailPage = () => {
                       <div className="text-[9px] md:text-xs font-bold text-gray-400 uppercase">Thời gian</div>
                       <div className="flex items-center gap-2">
                         <div className={`font-bold text-sm md:text-base ${post.status === 'SOLD' ? 'text-gray-900' : 'text-blue-700'}`}>
-                          {new Date(
-                            post.status === 'SOLD' && post.buyer?.completed_at 
-                            ? post.buyer.completed_at 
-                            : (activeRequest?.meeting_at || post.my_request?.meeting_at)
-                          ).toLocaleString('vi-VN', {
-                            day: '2-digit', month: '2-digit', year: 'numeric',
-                            hour: '2-digit', minute: '2-digit'
-                          })}
+                          {(() => {
+                            const dateStr = post.status === 'SOLD' && post.buyer?.completed_at 
+                              ? post.buyer.completed_at 
+                              : (activeRequest?.meeting_at || post.my_request?.meeting_at);
+                            if (!dateStr) return '—';
+                            
+                            // Thay khoảng trắng bằng T và bỏ Z nếu có để ép trình duyệt hiểu là giờ Local
+                            const normalizedDate = dateStr.replace(' ', 'T').replace('Z', '');
+                            return new Date(normalizedDate).toLocaleString('vi-VN', {
+                              day: '2-digit', month: '2-digit', year: 'numeric',
+                              hour: '2-digit', minute: '2-digit'
+                            });
+                          })()}
                         </div>
                         {(post.is_owner || post.my_request?.status === 'ACCEPTED') && activeRequest?.status === 'ACCEPTED' && (
                           <button 
