@@ -165,7 +165,7 @@ const DocsPage = () => {
                         />
                       ) : (
                         <div>
-                          <div className="font-medium text-gray-800 whitespace-nowrap mb-1.5">{doc.title}</div>
+                          <div className="font-medium text-gray-800 break-words min-w-[200px] max-w-[400px] mb-1.5">{doc.title}</div>
                           <div className="flex items-center gap-1">
                             {/* Xem PDF */}
                             <a href={doc.file_url} target="_blank" rel="noopener noreferrer"
