@@ -385,13 +385,13 @@ const PostDetailPage = () => {
                       onChange={(e) => setEditForm({...editForm, title: e.target.value})}
                     />
                     
-                    <div className="p-4 border-2 border-primary/20 rounded-2xl">
-                      <p className="text-xs font-black text-gray-500 uppercase tracking-widest mb-2">Đổi ảnh mới</p>
+                    <div className="flex items-center gap-2 p-3 bg-gray-50 rounded-xl border border-gray-100">
+                      <span className="font-bold text-sm text-gray-500 whitespace-nowrap">Ảnh mới:</span>
                       <input 
                         type="file" 
                         accept="image/*"
                         onChange={(e) => setEditForm({...editForm, image: e.target.files[0]})}
-                        className="text-xs w-full file:mr-3 file:py-1.5 file:px-3 file:rounded-full file:border-0 file:text-[10px] file:font-black file:bg-primary file:text-white hover:file:bg-primary-dark cursor-pointer"
+                        className="flex-1 text-[10px] font-bold text-gray-500 file:mr-2 file:py-1 file:px-2 file:rounded-full file:border-0 file:text-[9px] file:font-black file:bg-primary/10 file:text-primary hover:file:bg-primary/20 cursor-pointer outline-none"
                       />
                     </div>
 
