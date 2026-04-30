@@ -242,7 +242,7 @@ const PostDetailPage = () => {
 
                 {exchangeRequests.length === 0 ? (
                   <div className="text-center py-8 md:py-10 text-sm md:text-base text-gray-500 font-medium bg-gray-50 rounded-xl md:rounded-2xl border border-dashed border-gray-200">
-                    Chưa có ai gửi yêu cầu cho bài đăng này.
+                    Chưa có yêu cầu!
                   </div>
                 ) : (
                   <div className="space-y-3 md:space-y-4">
@@ -385,16 +385,16 @@ const PostDetailPage = () => {
                       onChange={(e) => setEditForm({...editForm, title: e.target.value})}
                     />
                     
-                    <div className="p-4 bg-blue-50/50 rounded-2xl border border-blue-100">
-                      <p className="text-[10px] font-black text-blue-400 uppercase tracking-widest mb-2">Đổi ảnh bài đăng</p>
+                    <div className="p-4 border-2 border-primary/20 rounded-2xl">
+                      <p className="font-black text-black uppercase tracking-widest mb-2">Đổi ảnh mới</p>
                       <input 
                         type="file" 
                         accept="image/*"
                         onChange={(e) => setEditForm({...editForm, image: e.target.files[0]})}
-                        className="text-xs w-full file:mr-3 file:py-1.5 file:px-3 file:rounded-full file:border-0 file:text-[10px] file:font-black file:bg-primary file:text-white hover:file:bg-primary-dark cursor-pointer"
+                        className="text-sm w-full file:mr-3 file:py-1.5 file:px-3 file:rounded-full file:border-0 file:text-[10px] file:font-black file:bg-primary file:text-white hover:file:bg-primary-dark cursor-pointer"
                       />
                       {editForm.image && (
-                        <p className="text-[10px] text-green-600 font-bold mt-2">✓ Đã chọn: {editForm.image.name}</p>
+                        <p className="text-sm text-green-600 font-bold mt-2">Đã chọn: {editForm.image.name}</p>
                       )}
                     </div>
 
