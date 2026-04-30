@@ -140,14 +140,13 @@ const PostDetailPage = () => {
 
   const handleUpdateRequestStatus = async (requestId, status, meeting_at = null, poster_message = null) => {
     try {
-      // Kiểm tra thời gian phải >= hiện tại
       if (meeting_at && new Date(meeting_at) < new Date()) {
         return toast.error('Thời gian hẹn gặp không được ở quá khứ!');
       }
 
       await api.patch(`/api/market/requests/${requestId}`, { 
         status, 
-        meeting_at: meeting_at ? new Date(meeting_at).toISOString() : null, // Gửi giờ UTC chuẩn
+        meeting_at: meeting_at ? new Date(meeting_at).toISOString() : null,
         poster_message
       });
       fetchPostDetail();
@@ -185,25 +184,19 @@ const PostDetailPage = () => {
 
   const parseStandardDate = (dateStr) => {
     if (!dateStr) return null;
-    // Nếu server trả về thiếu 'Z', ta chủ động thêm vào để trình duyệt hiểu là UTC
     const utcStr = (dateStr.includes('Z') || dateStr.includes('+')) ? dateStr : dateStr.replace(' ', 'T') + 'Z';
     return new Date(utcStr);
   };
 
-  // Tìm yêu cầu đang được chấp nhận (dành cho người bán)
   const acceptedRequestForSeller = exchangeRequests.find(r => r.status === 'ACCEPTED' || r.status === 'COMPLETED');
-  
-  // Yêu cầu đang hoạt động (có thể là của người bán xem danh sách, hoặc người mua xem của chính mình)
   const activeRequest = post?.is_owner ? acceptedRequestForSeller : (
     (post?.my_request?.status === 'ACCEPTED' || post?.my_request?.status === 'COMPLETED') ? post.my_request : null
   );
 
   const isAcceptedBuyer = post?.my_request && ['ACCEPTED', 'COMPLETED', 'CANCELLED'].includes(post.my_request.status);
-  
   const meetingTime = post.my_request?.meeting_at || activeRequest?.meeting_at;
   const meetingDateObj = parseStandardDate(meetingTime);
   const meetingPassed = meetingDateObj && meetingDateObj <= new Date();
-  
   const canReport = isAcceptedBuyer && meetingPassed;
 
   return (
@@ -407,7 +400,6 @@ const PostDetailPage = () => {
                     
                     <div className="flex items-center gap-2 p-3 bg-gray-50 rounded-xl border border-gray-100">
                       <span className="font-bold text-sm text-gray-500 whitespace-nowrap">Ảnh mới:</span>
-                      <br/>
                       <input 
                         type="file" 
                         accept="image/*"
@@ -484,7 +476,7 @@ const PostDetailPage = () => {
                   </div>
                 </div>
 
-                {((post.status === 'SOLD' && post.buyer) || activeRequest) && (
+                {((post.status === 'SOLD' && post.buyer) || activeRequest) && post.is_owner && (
                   <div className="flex items-center gap-3 text-gray-600">
                     <div className={`w-8 h-8 md:w-10 md:h-10 rounded-lg md:rounded-xl flex items-center justify-center text-sm md:text-base ${post.status === 'SOLD' ? 'bg-gray-50 text-gray-500' : 'bg-blue-50 text-blue-500'}`}>🤝</div>
                     <div className="min-w-0 flex-1">
@@ -494,14 +486,14 @@ const PostDetailPage = () => {
                           ? post.buyer.full_name
                           : activeRequest?.buyer_name
                         }
-                        {post.is_owner && (activeRequest?.buyer_phone || post.buyer?.phone) && (
+                        {(activeRequest?.buyer_phone || post.buyer?.phone) && (
                           <span className="inline-flex items-center gap-1 bg-green-50 text-green-700 px-2 py-0.5 rounded-full text-[9px] md:text-[10px] font-black border border-green-200">
                             <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
                             {activeRequest?.buyer_phone || post.buyer?.phone}
                           </span>
                         )}
                       </div>
-                      <div className={`text-[10px] md:text-xs font-bold ${post.status === 'SOLD' ? 'text-gray-500' : 'text-blue-700'}`}>
+                      <div className={`text-[10px] md:text-xs font-bold ${post.status === 'SOLD' ? 'text-gray-500' : 'text-blue-400'}`}>
                         @{post.status === 'SOLD' && post.buyer ? post.buyer.username : activeRequest?.buyer_username}
                       </div>
                     </div>
@@ -647,7 +639,7 @@ const PostDetailPage = () => {
                           disabled={post.is_hidden}
                           className={`w-full py-3 border-2 font-bold rounded-xl md:rounded-2xl transition-all flex items-center justify-center gap-2 text-sm ${post.is_hidden ? 'bg-gray-50 border-gray-100 text-gray-300 cursor-not-allowed' : 'border-red-100 text-red-500 hover:bg-red-50 hover:border-red-200'}`}
                         >
-                          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+                          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2 2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
                           XÓA BÀI
                         </button>
                       )}
@@ -718,7 +710,8 @@ const PostDetailPage = () => {
               
               <input 
                 type="datetime-local" 
-                className="w-full p-4 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition-all mb-6 font-bold"
+                className="w-full p-4 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition-all mb-6 font-bold bg-gray-50 appearance-none min-h-[60px]"
+                style={{ WebkitAppearance: 'none' }}
                 value={meetingAt}
                 onChange={(e) => setMeetingAt(e.target.value)}
               />
