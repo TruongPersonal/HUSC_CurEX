@@ -103,7 +103,7 @@ const UnitsPage = () => {
           </div>
           <div className="md:col-span-1 flex gap-2">
             <button type="submit" className="flex-1 px-6 py-2 bg-primary text-white font-bold rounded-lg hover:bg-primary-dark transition-all">
-              {editId ? 'Lưu' : 'Thêm'}
+              {editId ? 'Cập nhật' : 'Thêm mới'}
             </button>
             {editId && (
               <button type="button" onClick={() => {setEditId(null); setFormData({code:'', name:''})}} className="px-4 py-2 bg-gray-100 text-gray-600 font-bold rounded-lg hover:bg-gray-200 transition-all">

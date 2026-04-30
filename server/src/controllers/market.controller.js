@@ -1,4 +1,5 @@
 import { query } from '../database/db.js';
+import { uploadToSupabase } from '../utils/supabase.js';
 
 export const getPosts = async (req, res) => {
   try {
@@ -364,7 +365,7 @@ export const updateMarketPost = async (req, res) => {
     const { title, description, price, condition, place, subject_id } = req.body;
     const userId = req.user.id;
 
-    const postCheck = await query('SELECT user_id FROM posts WHERE id = $1', [id]);
+    const postCheck = await query('SELECT user_id, image_url FROM posts WHERE id = $1', [id]);
     if (postCheck.rows.length === 0) {
       return res.status(404).json({ message: 'Không tìm thấy bài đăng.' });
     }
@@ -373,14 +374,20 @@ export const updateMarketPost = async (req, res) => {
       return res.status(403).json({ message: 'Bạn không có quyền chỉnh sửa bài đăng này.' });
     }
 
+    let imageUrl = postCheck.rows[0].image_url;
+    if (req.file) {
+      imageUrl = await uploadToSupabase(req.file, 'market');
+    }
+
     await query(`
       UPDATE posts 
-      SET title = $1, description = $2, price = $3, condition = $4, place = $5, subject_id = $6, updated_at = NOW()
-      WHERE id = $7
-    `, [title, description, price, condition, place, subject_id, id]);
+      SET title = $1, description = $2, price = $3, condition = $4, place = $5, subject_id = $6, image_url = $7, updated_at = NOW()
+      WHERE id = $8
+    `, [title, description, price, condition, place, subject_id, imageUrl, id]);
 
-    res.status(200).json({ message: 'Cập nhật bài đăng thành công!' });
+    res.status(200).json({ message: 'Cập nhật bài đăng thành công!', image_url: imageUrl });
   } catch (error) {
+    console.error('Update market post error:', error);
     res.status(500).json({ message: 'Lỗi máy chủ nội bộ.' });
   }
 };

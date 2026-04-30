@@ -37,7 +37,8 @@ const PostDetailPage = () => {
     price: 0,
     condition: 'GOOD',
     place: '',
-    subject_id: ''
+    subject_id: '',
+    image: null
   });
 
   useEffect(() => {
@@ -88,7 +89,21 @@ const PostDetailPage = () => {
   const handleSaveEdit = async () => {
     try {
       setIsSubmitting(true);
-      await api.patch(`/api/market/${id}`, editForm);
+      const formData = new FormData();
+      formData.append('title', editForm.title);
+      formData.append('description', editForm.description);
+      formData.append('price', editForm.price);
+      formData.append('condition', editForm.condition);
+      formData.append('place', editForm.place);
+      formData.append('subject_id', editForm.subject_id);
+      if (editForm.image) {
+        formData.append('image', editForm.image);
+      }
+
+      await api.patch(`/api/market/${id}`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+      
       setIsEditing(false);
       fetchPostDetail();
       toast.success('Đã cập nhật bài đăng!');
@@ -179,6 +194,22 @@ const PostDetailPage = () => {
                 alt={post.title}
                 className="w-full aspect-square sm:aspect-[4/3] object-cover"
               />
+              {isEditing && (
+                <div className="absolute inset-0 bg-black/40 flex items-center justify-center p-4">
+                  <div className="bg-white p-4 rounded-xl shadow-xl w-full max-w-xs text-center">
+                    <p className="text-xs font-bold text-gray-500 mb-3 uppercase tracking-wider">Đổi ảnh mới</p>
+                    <input 
+                      type="file" 
+                      accept="image/*"
+                      onChange={(e) => setEditForm({...editForm, image: e.target.files[0]})}
+                      className="text-xs w-full mb-2 file:mr-2 file:py-1 file:px-2 file:rounded-full file:border-0 file:text-[10px] file:font-black file:bg-primary/10 file:text-primary hover:file:bg-primary/20 cursor-pointer"
+                    />
+                    {editForm.image && (
+                      <p className="text-[10px] text-green-600 font-bold truncate">✓ {editForm.image.name}</p>
+                    )}
+                  </div>
+                </div>
+              )}
               <div className="absolute top-4 right-4 md:top-6 md:right-6 z-10 flex flex-col gap-2 items-end">
                 <Badge status={post.condition === 'GOOD' ? 'success' : 'warning'} className="shadow-lg backdrop-blur-md text-[10px] md:text-xs">
                   {post.condition === 'GOOD' ? 'Mới' : 'Cũ'}
