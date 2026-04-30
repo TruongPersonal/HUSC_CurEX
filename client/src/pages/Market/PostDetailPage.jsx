@@ -393,9 +393,6 @@ const PostDetailPage = () => {
                         onChange={(e) => setEditForm({...editForm, image: e.target.files[0]})}
                         className="text-sm w-full file:mr-3 file:py-1.5 file:px-3 file:rounded-full file:border-0 file:text-[10px] file:font-black file:bg-primary file:text-white hover:file:bg-primary-dark cursor-pointer"
                       />
-                      {editForm.image && (
-                        <p className="text-sm text-green-600 font-bold mt-2">Đã chọn: {editForm.image.name}</p>
-                      )}
                     </div>
 
                     <div className="flex items-center gap-2 p-3 bg-gray-50 rounded-xl border border-gray-100">
