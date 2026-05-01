@@ -191,10 +191,13 @@ export const updateProfile = async (req, res) => {
   const userId = req.user.id;
 
   try {
+    // Nếu phone là chuỗi rỗng thì lưu là null
+    const phoneValue = phone && phone.trim() !== "" ? phone : null;
+
     const result = await query(
       `UPDATE users SET full_name = $1, phone = $2, updated_at = CURRENT_TIMESTAMP 
        WHERE id = $3 RETURNING id, username, email, full_name, avatar_url, role, unit_id, phone`,
-      [full_name, phone, userId]
+      [full_name, phoneValue, userId]
     );
 
     if (result.rows.length === 0) {

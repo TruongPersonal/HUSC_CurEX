@@ -33,9 +33,9 @@ const ChangePasswordModal = ({ isOpen, onClose }) => {
         { oldPassword, newPassword }
       );
       
-      // Thành công thì xóa sạch lỗi và gán success
+      // Thành công thì đặt error về rỗng và gán success
       setError('');
-      setSuccess(res.data.message);
+      setSuccess(res.data?.message || 'Đổi mật khẩu thành công!');
       
       // Cập nhật trạng thái user để hiện ô mật khẩu hiện tại cho lần sau
       setUser({ ...user, has_password: true });
@@ -43,6 +43,7 @@ const ChangePasswordModal = ({ isOpen, onClose }) => {
       setOldPassword('');
       setNewPassword('');
       setConfirmPassword('');
+      
       setTimeout(() => {
         onClose();
         setSuccess('');
@@ -69,7 +70,7 @@ const ChangePasswordModal = ({ isOpen, onClose }) => {
           {error && <div className="p-3 bg-red-50 text-red-600 text-sm rounded-lg border border-red-100">{error}</div>}
           {success && <div className="p-3 bg-green-50 text-green-600 text-sm rounded-lg border border-green-100">{success}</div>}
           
-          {user?.has_password !== false && (
+          {user?.has_password && (
             <div>
               <label className="block text-sm font-bold text-gray-700 mb-1">Mật khẩu hiện tại</label>
               <input type="password" value={oldPassword} onChange={e=>setOldPassword(e.target.value)} className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none" placeholder="Nhập mật khẩu hiện tại" required />
