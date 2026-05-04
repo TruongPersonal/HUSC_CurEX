@@ -1,5 +1,11 @@
 import { query } from '../database/db.js';
-import { uploadToSupabase } from '../utils/supabase.js';
+import { saveFileLocal } from '../utils/uploadUtils.js';
+
+const getFullImageUrl = (req, path) => {
+  if (!path) return path;
+  if (path.startsWith('http')) return path;
+  return `${req.protocol}://${req.get('host')}${path}`;
+};
 
 export const submitDocument = async (req, res) => {
   try {
@@ -16,7 +22,7 @@ export const submitDocument = async (req, res) => {
       return res.status(400).json({ message: 'Loại tài liệu không hợp lệ' });
     }
 
-    const file_url = await uploadToSupabase(req.file, 'documents');
+    const file_url = await saveFileLocal(req.file, 'documents');
 
     const result = await query(
       `INSERT INTO documents (title, file_url, type, status, user_id, subject_id)
@@ -27,7 +33,7 @@ export const submitDocument = async (req, res) => {
 
     res.status(201).json({
       message: 'Tải tài liệu lên thành công! Đang chờ Trợ lý Khoa phê duyệt.',
-      document: result.rows[0]
+      document: { ...result.rows[0], file_url: getFullImageUrl(req, result.rows[0].file_url) }
     });
   } catch (error) {
     res.status(500).json({ message: 'Lỗi server khi tải tài liệu lên' });
@@ -76,10 +82,11 @@ export const getMyDocuments = async (req, res) => {
 
     const result = await query(sql, params);
     res.status(200).json({
-      documents: result.rows,
-      hasMore: result.rows.length === parseInt(limit)
+      documents: result.rows.map(d => ({ ...d, file_url: getFullImageUrl(req, d.file_url) })),
+      hasMore: result.rows.map(d => ({ ...d, file_url: getFullImageUrl(req, d.file_url) })).length === parseInt(limit)
     });
   } catch (error) {
+    console.error(error);
     res.status(500).json({ message: 'Lỗi server' });
   }
 };
@@ -125,10 +132,11 @@ export const getPublicDocuments = async (req, res) => {
 
     const result = await query(sql, params);
     res.status(200).json({
-      documents: result.rows,
-      hasMore: result.rows.length === parseInt(limit)
+      documents: result.rows.map(d => ({ ...d, file_url: getFullImageUrl(req, d.file_url) })),
+      hasMore: result.rows.map(d => ({ ...d, file_url: getFullImageUrl(req, d.file_url) })).length === parseInt(limit)
     });
   } catch (error) {
+    console.error(error);
     res.status(500).json({ message: 'Lỗi server' });
   }
 };
@@ -170,6 +178,7 @@ export const getDocumentById = async (req, res) => {
 
     res.status(200).json({
       ...document,
+      file_url: getFullImageUrl(req, document.file_url),
       is_owner: document.user_id === userId,
       has_reported,
       is_hidden_by_admin
@@ -199,7 +208,7 @@ export const getRelatedDocuments = async (req, res) => {
       ORDER BY d.created_at DESC LIMIT 4
     `;
     const result = await query(sql, [id, subject_id]);
-    res.status(200).json(result.rows);
+    res.status(200).json(result.rows.map(d => ({ ...d, file_url: getFullImageUrl(req, d.file_url) })));
   } catch (error) {
     res.status(500).json({ message: 'Lỗi server' });
   }
@@ -221,7 +230,7 @@ export const updateDocument = async (req, res) => {
 
     let file_url = checkRes.rows[0].file_url;
     if (req.file) {
-      file_url = await uploadToSupabase(req.file, 'documents');
+      file_url = await saveFileLocal(req.file, 'documents');
     }
 
     const result = await query(
@@ -235,7 +244,10 @@ export const updateDocument = async (req, res) => {
       [title, type, subject_id, file_url, id]
     );
 
-    res.status(200).json({ message: 'Cập nhật tài liệu thành công! Đang chờ duyệt lại.', document: result.rows[0] });
+    res.status(200).json({ 
+      message: 'Cập nhật tài liệu thành công! Đang chờ duyệt lại.', 
+      document: { ...result.rows[0], file_url: getFullImageUrl(req, result.rows[0].file_url) } 
+    });
   } catch (error) {
     res.status(500).json({ message: 'Lỗi server' });
   }

@@ -2,7 +2,13 @@ import { OAuth2Client } from 'google-auth-library';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import { query } from '../database/db.js';
-import { uploadToSupabase } from '../utils/supabase.js';
+import { saveFileLocal } from '../utils/uploadUtils.js';
+
+const getFullImageUrl = (req, path) => {
+  if (!path) return path;
+  if (path.startsWith('http')) return path;
+  return `${req.protocol}://${req.get('host')}${path}`;
+};
 
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
@@ -75,7 +81,7 @@ export const googleLogin = async (req, res) => {
     res.status(200).json({
       message: 'Đăng nhập thành công',
       token,
-      user: userData
+      user: { ...userData, avatar_url: getFullImageUrl(req, userData.avatar_url) }
     });
 
   } catch (error) {
@@ -145,7 +151,7 @@ export const getMe = async (req, res) => {
     const { password, ...userWithoutPassword } = user;
     const userData = { ...userWithoutPassword, has_password: !!password };
 
-    res.status(200).json({ user: userData });
+    res.status(200).json({ user: { ...userData, avatar_url: getFullImageUrl(req, userData.avatar_url) } });
   } catch (error) {
     console.error('Get me error:', error);
     res.status(500).json({ message: 'Lỗi máy chủ nội bộ.' });
@@ -220,7 +226,7 @@ export const uploadAvatar = async (req, res) => {
       return res.status(400).json({ message: 'Vui lòng chọn ảnh đại diện.' });
     }
     
-    const avatar_url = await uploadToSupabase(req.file, 'avatars');
+    const avatar_url = await saveFileLocal(req.file, 'avatars');
     const userId = req.user.id;
 
     const result = await query(
@@ -230,7 +236,7 @@ export const uploadAvatar = async (req, res) => {
 
     res.status(200).json({ 
       message: 'Cập nhật ảnh đại diện thành công.',
-      avatar_url: result.rows[0].avatar_url
+      avatar_url: getFullImageUrl(req, result.rows[0].avatar_url)
     });
   } catch (error) {
     console.error('Upload avatar error:', error);

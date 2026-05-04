@@ -1,5 +1,11 @@
 import { query } from '../database/db.js';
-import { uploadToSupabase } from '../utils/supabase.js';
+import { saveFileLocal } from '../utils/uploadUtils.js';
+
+const getFullImageUrl = (req, path) => {
+  if (!path) return path;
+  if (path.startsWith('http')) return path;
+  return `${req.protocol}://${req.get('host')}${path}`;
+};
 
 export const getFormData = async (req, res) => {
   try {
@@ -25,7 +31,7 @@ export const createPost = async (req, res) => {
       return res.status(400).json({ message: 'Vui lòng tải lên 1 hình ảnh' });
     }
     
-    const image_url = await uploadToSupabase(req.file, 'posts');
+    const image_url = await saveFileLocal(req.file, 'posts');
     
     if (!title || !price || !condition || !place || !subject_id) {
       return res.status(400).json({ message: 'Vui lòng điền đầy đủ các trường bắt buộc' });
@@ -52,7 +58,7 @@ export const createPost = async (req, res) => {
     
     res.status(201).json({
       message: 'Đăng bài thành công!',
-      post: result.rows[0]
+      post: { ...result.rows[0], image_url: getFullImageUrl(req, result.rows[0].image_url) }
     });
     
   } catch (error) {
@@ -86,7 +92,7 @@ export const getAssistantPosts = async (req, res) => {
       ORDER BY p.updated_at DESC
     `;
     const result = await query(sql, [req.user.unit_id, tab]);
-    res.status(200).json(result.rows);
+    res.status(200).json(result.rows.map(p => ({ ...p, image_url: getFullImageUrl(req, p.image_url) })));
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Lỗi server khi tải bài đăng' });

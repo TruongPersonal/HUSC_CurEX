@@ -1,5 +1,11 @@
 import { query } from '../database/db.js';
-import { uploadToSupabase } from '../utils/supabase.js';
+import { saveFileLocal } from '../utils/uploadUtils.js';
+
+const getFullImageUrl = (req, path) => {
+  if (!path) return path;
+  if (path.startsWith('http')) return path;
+  return `${req.protocol}://${req.get('host')}${path}`;
+};
 
 export const getPosts = async (req, res) => {
   try {
@@ -68,18 +74,18 @@ export const getPosts = async (req, res) => {
       paramIndex++;
     }
 
-    queryStr += ` GROUP BY p.id, s.name, u.full_name`;
     queryStr += ` ORDER BY p.created_at DESC LIMIT $${paramIndex} OFFSET $${paramIndex + 1}`;
     queryParams.push(parseInt(limit), parseInt(offset));
 
     const result = await query(queryStr, queryParams);
 
     res.status(200).json({
-      posts: result.rows,
+      posts: result.rows.map(p => ({ ...p, image_url: getFullImageUrl(req, p.image_url) })),
       hasMore: result.rows.length === parseInt(limit)
     });
 
   } catch (error) {
+    console.error('Get posts error:', error);
     res.status(500).json({ message: 'Lỗi máy chủ nội bộ.' });
   }
 };
@@ -163,6 +169,7 @@ export const getPostById = async (req, res) => {
 
     res.status(200).json({
       ...post,
+      image_url: getFullImageUrl(req, post.image_url),
       is_owner: post.user_id === userId,
       my_request: myRequest,
       buyer,
@@ -189,7 +196,7 @@ export const getRelatedPosts = async (req, res) => {
       LIMIT 4
     `, [subject_id, id]);
 
-    res.status(200).json(result.rows);
+    res.status(200).json(result.rows.map(p => ({ ...p, image_url: getFullImageUrl(req, p.image_url) })));
   } catch (error) {
     res.status(500).json({ message: 'Lỗi khi tải bài đăng liên quan.' });
   }
@@ -376,8 +383,10 @@ export const updateMarketPost = async (req, res) => {
 
     let imageUrl = postCheck.rows[0].image_url;
     if (req.file) {
-      imageUrl = await uploadToSupabase(req.file, 'posts');
+      imageUrl = await saveFileLocal(req.file, 'posts');
     }
+
+    const fullImageUrl = imageUrl.startsWith('http') ? imageUrl : `${req.protocol}://${req.get('host')}${imageUrl}`;
 
     await query(`
       UPDATE posts 
@@ -385,7 +394,7 @@ export const updateMarketPost = async (req, res) => {
       WHERE id = $8
     `, [title, description, price, condition, place, subject_id, imageUrl, id]);
 
-    res.status(200).json({ message: 'Cập nhật bài đăng thành công!', image_url: imageUrl });
+    res.status(200).json({ message: 'Cập nhật bài đăng thành công!', image_url: fullImageUrl });
   } catch (error) {
     console.error('Update market post error:', error);
     res.status(500).json({ message: 'Lỗi máy chủ nội bộ.' });
