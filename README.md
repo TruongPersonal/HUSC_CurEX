@@ -23,5 +23,5 @@ HUSC CurEX là nền tảng web hiện đại dành riêng cho sinh viên nhằm
 
 ## 📄 Ghi chú
 
-Dự án này được phát triển phục vụ cho báo cáo đồ án môn học **Kỹ nghệ phần mềm**.
-**Sinh viên chủ nhiệm:** Ngô Quang Trường (23t1020573) - Lớp học phần 2025-2026.2.TIN3043.004
+- Dự án này được phát triển phục vụ cho báo cáo đồ án môn học **Kỹ nghệ phần mềm**.
+- **Sinh viên chủ nhiệm:** Ngô Quang Trường (23t1020573) - Lớp học phần 2025-2026.2.TIN3043.004
