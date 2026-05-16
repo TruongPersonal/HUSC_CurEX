@@ -17,11 +17,6 @@ const DocDetailPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   
-  // Điều hướng nếu là khách (chưa đăng nhập)
-  if (!loading && !user) {
-    return <Navigate to="/" replace />;
-  }
-  
   const [isEditMode, setIsEditMode] = useState(false);
   const [editForm, setEditForm] = useState({
     title: '',
@@ -115,6 +110,11 @@ const DocDetailPage = () => {
       toast.error(err.response?.data?.message || 'Lỗi khi xóa tài liệu');
     }
   };
+
+  // Điều hướng nếu là khách (chưa đăng nhập)
+  if (!loading && !user) {
+    return <Navigate to="/" replace />;
+  }
 
   if (loading) {
     return (

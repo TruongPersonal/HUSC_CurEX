@@ -19,11 +19,6 @@ const PostDetailPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   
-  // Điều hướng nếu là khách (chưa đăng nhập)
-  if (!loading && !user) {
-    return <Navigate to="/" replace />;
-  }
-  
   const [showRequestModal, setShowRequestModal] = useState(false);
   const [requestMessage, setRequestMessage] = useState('Chào bạn, mình muốn trao đổi cuốn sách này!');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -172,6 +167,11 @@ const PostDetailPage = () => {
       toast.error(err.response?.data?.message || 'Không thể xóa.');
     }
   };
+
+  // Điều hướng nếu là khách (chưa đăng nhập)
+  if (!loading && !user) {
+    return <Navigate to="/" replace />;
+  }
 
   if (loading) return (
     <div className="min-h-screen flex items-center justify-center text-gray-400 font-medium">
