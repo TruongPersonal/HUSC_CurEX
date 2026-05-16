@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useParams, Link, useNavigate, Navigate } from 'react-router-dom';
 import api from '../../utils/api';
 import { useAuth } from '../../contexts/AuthContext';
 import Badge from '../../components/ui/Badge';
@@ -18,6 +18,11 @@ const PostDetailPage = () => {
   const [exchangeRequests, setExchangeRequests] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  
+  // Điều hướng nếu là khách (chưa đăng nhập)
+  if (!loading && !user) {
+    return <Navigate to="/" replace />;
+  }
   
   const [showRequestModal, setShowRequestModal] = useState(false);
   const [requestMessage, setRequestMessage] = useState('Chào bạn, mình muốn trao đổi cuốn sách này!');
@@ -174,13 +179,8 @@ const PostDetailPage = () => {
     </div>
   );
 
-  if (error || !post) return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-4">
-      <div className="text-red-500 text-6xl mb-4">⚠️</div>
-      <h2 className="text-2xl font-bold text-gray-800 mb-2">{error || 'Không tìm thấy bài đăng'}</h2>
-      <Link to="/market" className="text-primary font-bold hover:underline">Quay lại Chợ giáo trình</Link>
-    </div>
-  );
+  // Nếu có lỗi hoặc không tìm thấy bài đăng, điều hướng về trang chủ (hoặc /market)
+  if (error || !post) return <Navigate to="/" replace />;
 
   const parseStandardDate = (dateStr) => {
     if (!dateStr) return null;
