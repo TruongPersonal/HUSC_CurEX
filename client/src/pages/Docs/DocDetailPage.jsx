@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useParams, Link, useNavigate, Navigate } from 'react-router-dom';
 import api from '../../utils/api';
 import { useAuth } from '../../contexts/AuthContext';
 import Badge from '../../components/ui/Badge';
@@ -111,6 +111,11 @@ const DocDetailPage = () => {
     }
   };
 
+  // Điều hướng nếu là khách (chưa đăng nhập)
+  if (!loading && !user) {
+    return <Navigate to="/" replace />;
+  }
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
@@ -121,20 +126,8 @@ const DocDetailPage = () => {
     );
   }
 
-  if (error || !doc) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="text-center bg-white p-8 rounded-3xl shadow-sm border border-gray-100 max-w-md">
-          <div className="text-4xl mb-4">⚠️</div>
-          <h2 className="text-xl font-bold text-gray-900 mb-2">Đã xảy ra lỗi</h2>
-          <p className="text-gray-500 mb-6">{error || 'Tài liệu không tồn tại'}</p>
-          <Link to="/doc" className="inline-block bg-primary text-white px-6 py-2 rounded-xl font-bold transition-all hover:bg-primary-dark">
-            Quay lại kho tài liệu
-          </Link>
-        </div>
-      </div>
-    );
-  }
+  // Nếu có lỗi hoặc không tìm thấy tài liệu, điều hướng về trang chủ
+  if (error || !doc) return <Navigate to="/" replace />;
 
   return (
     <div className="bg-gray-50 min-h-screen pb-10 md:pb-20 pt-4 md:pt-8">

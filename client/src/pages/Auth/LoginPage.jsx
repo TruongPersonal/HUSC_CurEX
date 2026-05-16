@@ -12,6 +12,16 @@ const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const { isAuthenticated, user } = useAuth();
+
+  // Redirect if already logged in
+  useEffect(() => {
+    if (isAuthenticated && user) {
+      if (user.role === 'ADMIN') navigate('/admin', { replace: true });
+      else if (user.role === 'ASSISTANT') navigate('/assistant', { replace: true });
+      else navigate('/', { replace: true });
+    }
+  }, [isAuthenticated, user, navigate]);
 
   // Tự động ẩn thông báo lỗi sau 5 giây
   useEffect(() => {
